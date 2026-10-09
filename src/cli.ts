@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { initCommand } from "./commands/init.js";
+
 declare const process: {
   argv: string[];
   exitCode?: number;
@@ -31,7 +33,7 @@ function printVersion(): void {
   console.log(`CATZ Harness CLI v${VERSION}`);
 }
 
-function main(args: string[]): void {
+async function main(args: string[]): Promise<void> {
   if (args.includes("--version") || args.includes("-V")) {
     printVersion();
     return;
@@ -43,9 +45,19 @@ function main(args: string[]): void {
   }
 
   const command = args[0];
-  console.error(`Unknown or unavailable command in v0.1 Milestone 1: ${command}`);
+
+  if (command === "init" && args.length === 1) {
+    await initCommand();
+    return;
+  }
+
+  console.error(`Unknown or unavailable command in v0.1 Milestone 2: ${command}`);
   console.error("Run 'catz --help' to see the planned command surface.");
   process.exitCode = 1;
 }
 
-main(process.argv.slice(2));
+main(process.argv.slice(2)).catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(`CATZ init failed: ${message}`);
+  process.exitCode = 1;
+});

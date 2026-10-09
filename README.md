@@ -14,20 +14,39 @@ catz harness remove <name>
 catz harness doctor
 ```
 
-Milestone 1 establishes the executable itself:
+## Milestone 2 — initialize a CATZ workspace
+
+Build and link the CLI locally:
 
 ```bash
 npm install
 npm run build
 npm link
-catz --version
-catz --help
 ```
 
-Expected version:
+Then initialize the current project:
+
+```bash
+catz init
+```
+
+The command creates:
 
 ```text
-CATZ Harness CLI v0.1.0
+.catz/
+├── harnesses/
+└── catz.json
 ```
 
-Harness installation behavior is implemented in later v0.1 milestones.
+with:
+
+```json
+{
+  "version": 1,
+  "harnesses": {}
+}
+```
+
+Running `catz init` again is safe and does not overwrite an existing `.catz/catz.json`.
+
+Registry resolution, harness installation, listing, removal, and doctor checks are intentionally deferred to later v0.1 milestones.
