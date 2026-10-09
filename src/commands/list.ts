@@ -3,6 +3,7 @@ import {
   readWorkspaceManifest,
 } from "../core/manifest.js";
 import { getCatzPaths } from "../core/paths.js";
+import { assertSafeCatzPath, UnsafeCatzPathError } from "../core/security.js";
 import { pathExists } from "../utils/filesystem.js";
 
 const NAME_WIDTH = 15;
@@ -10,6 +11,18 @@ const VERSION_WIDTH = 11;
 
 export async function listCommand(projectDir?: string): Promise<number> {
   const paths = getCatzPaths(projectDir);
+
+  try {
+    await assertSafeCatzPath(paths.projectDir, paths.catzDir, "directory");
+    await assertSafeCatzPath(paths.projectDir, paths.manifestFile, "file");
+  } catch (error) {
+    if (error instanceof UnsafeCatzPathError) {
+      console.log("CATZ Harness\n");
+      console.log("✗ Unsafe CATZ workspace path detected.");
+      return 1;
+    }
+    throw error;
+  }
 
   if (!(await pathExists(paths.manifestFile))) {
     console.log("CATZ Harness\n");

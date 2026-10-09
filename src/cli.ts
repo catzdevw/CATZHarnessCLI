@@ -11,7 +11,7 @@ declare const process: {
   exitCode?: number;
 };
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 
 const HELP = `CATZ Harness CLI v${VERSION}
 
@@ -51,7 +51,7 @@ async function main(args: string[]): Promise<void> {
   const command = args[0];
 
   if (command === "init" && args.length === 1) {
-    await initCommand();
+    process.exitCode = await initCommand();
     return;
   }
 
