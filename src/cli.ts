@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { addCommand } from "./commands/add.js";
 import { initCommand } from "./commands/init.js";
 
 declare const process: {
@@ -51,13 +52,18 @@ async function main(args: string[]): Promise<void> {
     return;
   }
 
-  console.error(`Unknown or unavailable command in v0.1 Milestone 2: ${command}`);
+  if (command === "harness" && args[1] === "add" && args.length === 3) {
+    process.exitCode = await addCommand(args[2]);
+    return;
+  }
+
+  console.error(`Unknown or unavailable command in v0.1 Milestone 3: ${command}`);
   console.error("Run 'catz --help' to see the planned command surface.");
   process.exitCode = 1;
 }
 
 main(process.argv.slice(2)).catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
-  console.error(`CATZ init failed: ${message}`);
+  console.error(`CATZ command failed: ${message}`);
   process.exitCode = 1;
 });
