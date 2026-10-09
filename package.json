@@ -4,7 +4,7 @@
   "description": "A lightweight CLI for initializing CATZ workspaces and managing CATZ harnesses.",
   "type": "module",
   "bin": {
-    "catz": "./dist/cli.js"
+    "catz": "dist/cli.js"
   },
   "files": [
     "dist"
