@@ -1,123 +1,243 @@
-# CATZ Harness CLI
+<p align="center">
+  <img src="assets/catz-hero.svg" alt="CATZ Harness CLI — Build. Install. Manage. Validate." width="100%">
+</p>
 
-A lightweight command-line interface for initializing CATZ workspaces and managing CATZ harnesses.
+<p align="center">
+  <a href="https://www.npmjs.com/package/catz-harness"><img src="https://img.shields.io/npm/v/catz-harness?label=npm&color=7c3aed" alt="npm version"></a>
+  <a href="https://github.com/kyumw3b/CATZHarnessCLI/actions/workflows/ci.yml"><img src="https://github.com/kyumw3b/CATZHarnessCLI/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <img src="https://img.shields.io/badge/node-%3E%3D20-22c55e?logo=node.js&logoColor=white" alt="Node.js 20 or newer">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22d3ee" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/tests-35%20passing-34d399" alt="35 tests passing">
+</p>
 
-> **v0.1 note:** the `presentation` harness is currently a built-in installation fixture used to validate the CLI contract. The full CATZ PowerPoint Presentation Harness is not bundled yet. It will replace this fixture in a later repository integration step.
+<p align="center">
+  <strong>The project-local installer and workspace manager for reusable CATZ engineering harnesses.</strong>
+</p>
+
+<p align="center">
+  <a href="#why-catz">Why CATZ</a> ·
+  <a href="#how-it-works">How It Works</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#commands">Commands</a> ·
+  <a href="#harnesses">Harnesses</a> ·
+  <a href="#safety-by-design">Safety</a> ·
+  <a href="#roadmap">Roadmap</a>
+</p>
+
+---
+
+## Why CATZ
+
+<img align="right" src="assets/catz-mascot.svg" alt="CATZ terminal cat mascot" width="220">
+
+Engineering knowledge often ends up scattered across prompts, checklists, Markdown files, repositories, and personal workflows. That makes good practices difficult to reuse consistently from one project to the next.
+
+**CATZ turns reusable engineering guidance into project-local harnesses that can be installed, tracked, validated, and removed through one predictable CLI.**
+
+The CLI keeps the workspace explicit: CATZ state lives inside the project, the manifest is the source of truth, and diagnostics are read-only.
+
+CATZ is being built as an open-source engineering harness ecosystem. This repository provides the command-line layer that manages those harnesses.
+
+<br clear="right">
+
+## How It Works
+
+Three commands are enough to understand the core workflow.
+
+### 1. Initialize
+
+```bash
+npx catz-harness init
+```
+
+Creates a project-local CATZ workspace.
+
+### 2. Install a harness
+
+```bash
+npx catz-harness harness add presentation
+```
+
+Adds the harness to `.catz/harnesses/` and registers its version in the workspace manifest.
+
+### 3. Validate
+
+```bash
+npx catz-harness harness doctor
+```
+
+Checks the runtime, workspace, manifest, harness directories, metadata, names, and versions without repairing or rewriting state.
+
+## Quick Start
+
+No global installation is required.
+
+```bash
+npx catz-harness --version
+npx catz-harness init
+npx catz-harness harness add presentation
+npx catz-harness harness list
+npx catz-harness harness doctor
+npx catz-harness harness remove presentation
+npx catz-harness harness list
+```
+
+CATZ creates a small, visible workspace inside the current project:
+
+```text
+your-project/
+└── .catz/
+    ├── catz.json
+    └── harnesses/
+        └── presentation/
+            └── harness.json
+```
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `catz init` | Initialize a CATZ workspace without overwriting an existing manifest. |
+| `catz harness add <name>` | Install a supported harness and register its version. |
+| `catz harness list` | List harnesses registered in `.catz/catz.json`. |
+| `catz harness remove <name>` | Remove a CATZ-managed harness and unregister it safely. |
+| `catz harness doctor` | Run read-only health checks across the workspace and installed harnesses. |
+
+### Workspace manifest
+
+The workspace manifest is the source of truth for installed state:
+
+```json
+{
+  "version": 1,
+  "harnesses": {
+    "presentation": "0.1.0"
+  }
+}
+```
+
+## Harnesses
+
+### Available in v0.1.0
+
+`presentation` is the built-in installable harness name used by the first public CLI release.
+
+> [!NOTE]
+> **v0.1.0 integration status:** `presentation` currently installs a built-in fixture used to validate the CLI contract. The full CATZ PowerPoint Presentation Harness is not bundled in this release; it will replace the fixture in a later integration step.
+
+### CATZ ecosystem direction
+
+The broader CATZ ecosystem is designed around reusable engineering harnesses for areas such as:
+
+- PowerPoint presentation workflows
+- product requirements
+- architecture
+- UI/UX
+- frontend engineering
+- backend and business logic
+- API contracts
+- databases
+- security
+- software testing and QA
+
+These ecosystem projects are not automatically installable through the CLI unless they are explicitly integrated and supported by the current release.
+
+## Safety by Design
+
+CATZ v0.1.0 deliberately keeps its behavior small and predictable.
+
+- **Project-local state** — CATZ operates inside `.catz/` in the current project.
+- **Manifest-based state** — `.catz/catz.json` is the source of truth for installed harnesses.
+- **Idempotent operations** — repeated initialization, installation, and removal are handled safely.
+- **Validated harness names** — unsafe names are rejected before filesystem mutation.
+- **Read-only diagnostics** — `catz harness doctor` reports problems without repairing or rewriting files.
+- **Cross-platform verification** — CI runs on Windows and Ubuntu with Node.js 20 and 22.
+- **Release-tested** — the public `0.1.0` package passed the full clean-room `npx` lifecycle before release tagging.
+
+## Roadmap
+
+| Stage | Status |
+| --- | --- |
+| CLI executable and command routing | ✅ Complete |
+| `catz init` | ✅ Complete |
+| `catz harness add` | ✅ Complete |
+| `catz harness list` | ✅ Complete |
+| `catz harness remove` | ✅ Complete |
+| `catz harness doctor` | ✅ Complete |
+| npm / npx distribution | ✅ Complete |
+| CATZ Harness CLI `v0.1.0` | 🔒 Released |
+| Full PowerPoint Presentation Harness integration | 🚧 Next |
+
+The current focus is integrating a real CATZ harness source without expanding the CLI beyond its validated v0.1 contract prematurely.
 
 ## Requirements
 
 - Node.js 20 or newer
 - npm / npx
 
-## Quick Start
+## Development
 
-Run CATZ without installing it globally:
+<details>
+<summary><strong>Local development and package verification</strong></summary>
 
-```bash
-npx catz-harness init
-npx catz-harness harness add presentation
-npx catz-harness harness list
-npx catz-harness harness doctor
-```
-
-A CATZ workspace lives inside the current project:
-
-```text
-.catz/
-├── catz.json
-└── harnesses/
-```
-
-## Commands
-
-### Initialize a workspace
+### Install dependencies
 
 ```bash
-catz init
+npm ci
 ```
 
-Creates `.catz/`, `.catz/harnesses/`, and `.catz/catz.json`. Running it again is safe and does not overwrite an existing manifest.
-
-### Add a harness
+### Run the test suite
 
 ```bash
-catz harness add <name>
-```
-
-For v0.1, the built-in installable fixture is:
-
-```bash
-catz harness add presentation
-```
-
-The command creates the managed harness directory and registers the harness version in `.catz/catz.json`.
-
-### List installed harnesses
-
-```bash
-catz harness list
-```
-
-Lists harnesses registered in `.catz/catz.json`. The workspace manifest is the source of truth for installed state.
-
-### Remove a harness
-
-```bash
-catz harness remove <name>
-```
-
-Recursively removes the CATZ-managed harness directory and unregisters it from the workspace manifest. Removal is idempotent and validates harness names before touching the filesystem.
-
-### Diagnose a workspace
-
-```bash
-catz harness doctor
-```
-
-Performs read-only health checks for:
-
-- supported Node.js runtime
-- CATZ workspace presence
-- valid `.catz/catz.json`
-- harness root presence
-- each registered harness directory
-- each registered `harness.json`
-- harness name consistency
-- harness version consistency
-
-Doctor does not repair or rewrite workspace state.
-
-## Local Development
-
-```bash
-npm install
 npm test
-npm link
 ```
 
-Then the local executable is available as:
+The v0.1.0 release baseline contains **35 passing tests**.
+
+### Link the CLI locally
 
 ```bash
+npm link
 catz --version
 catz --help
 ```
 
-## Package Verification
-
-Before publishing a release:
+### Inspect the npm package
 
 ```bash
-npm test
 npm pack --dry-run
 npm pack
 ```
 
-The npm package intentionally ships compiled `dist/` output plus npm's automatically included package metadata, README, and license. Source files and tests are not part of the published package.
+The published package intentionally ships compiled `dist/` output plus npm's automatically included package metadata, README, and license. Source files and tests are not included in the npm tarball.
 
-## Version
+</details>
 
-Current release target: `0.1.0`.
+## Release
+
+Current public package:
+
+```text
+catz-harness@0.1.0
+```
+
+Run it directly with:
+
+```bash
+npx catz-harness init
+```
 
 ## License
 
-MIT
+Released under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  <img src="assets/catz-mascot.svg" alt="CATZ mascot" width="92">
+</p>
+
+<p align="center">
+  <strong>CATZ Harness CLI</strong><br>
+  Build. Install. Manage. Validate.
+</p>
