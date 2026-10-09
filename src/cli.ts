@@ -2,6 +2,7 @@
 
 import { addCommand } from "./commands/add.js";
 import { initCommand } from "./commands/init.js";
+import { listCommand } from "./commands/list.js";
 
 declare const process: {
   argv: string[];
@@ -57,7 +58,12 @@ async function main(args: string[]): Promise<void> {
     return;
   }
 
-  console.error(`Unknown or unavailable command in v0.1 Milestone 3: ${command}`);
+  if (command === "harness" && args[1] === "list" && args.length === 2) {
+    process.exitCode = await listCommand();
+    return;
+  }
+
+  console.error(`Unknown or unavailable command in v0.1 Milestone 4: ${command}`);
   console.error("Run 'catz --help' to see the planned command surface.");
   process.exitCode = 1;
 }
