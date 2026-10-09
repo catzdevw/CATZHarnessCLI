@@ -7,12 +7,15 @@
   <a href="https://github.com/kyumw3b/CATZHarnessCLI/actions/workflows/ci.yml"><img src="https://github.com/kyumw3b/CATZHarnessCLI/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
   <img src="https://img.shields.io/badge/node-%3E%3D20-22c55e?logo=node.js&logoColor=white" alt="Node.js 20 or newer">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22d3ee" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/tests-35%20passing-34d399" alt="35 tests passing">
+  <img src="https://img.shields.io/badge/tests-45%20passing-34d399" alt="45 tests passing">
 </p>
 
 <p align="center">
   <strong>The project-local installer and workspace manager for reusable CATZ engineering harnesses.</strong>
 </p>
+
+> [!IMPORTANT]
+> **Security update:** npm `v0.1.0` has a known symlink/junction workspace-boundary weakness when used inside a maliciously prepared repository. `v0.1.1` hardens filesystem containment and is the current source target. Until `v0.1.1` is published, avoid running `v0.1.0` in untrusted repositories.
 
 <p align="center">
   <a href="#why-catz">Why CATZ</a> ·
@@ -100,7 +103,7 @@ your-project/
 | `catz init` | Initialize a CATZ workspace without overwriting an existing manifest. |
 | `catz harness add <name>` | Install a supported harness and register its version. |
 | `catz harness list` | List harnesses registered in `.catz/catz.json`. |
-| `catz harness remove <name>` | Remove a CATZ-managed harness and unregister it safely. |
+| `catz harness remove <name>` | Remove a registered harness only after CATZ proves the target remains inside its verified workspace boundary. |
 | `catz harness doctor` | Run read-only health checks across the workspace and installed harnesses. |
 
 ### Workspace manifest
@@ -111,7 +114,9 @@ The workspace manifest is the source of truth for installed state:
 {
   "version": 1,
   "harnesses": {
-    "presentation": "0.1.0"
+    "presentation": {
+      "version": "0.1.0"
+    }
   }
 }
 ```
@@ -144,15 +149,17 @@ These ecosystem projects are not automatically installable through the CLI unles
 
 ## Safety by Design
 
-CATZ v0.1.0 deliberately keeps its behavior small and predictable.
+CATZ keeps its behavior small and predictable. The `v0.1.1` source target adds explicit filesystem-boundary hardening after the first public security audit.
 
-- **Project-local state** — CATZ operates inside `.catz/` in the current project.
+- **Verified filesystem containment** — write/delete operations reject symlinked or junction CATZ paths and fail closed when containment cannot be proven.
+- **Project-local state** — managed paths are verified against the current project before filesystem mutation.
 - **Manifest-based state** — `.catz/catz.json` is the source of truth for installed harnesses.
 - **Idempotent operations** — repeated initialization, installation, and removal are handled safely.
-- **Validated harness names** — unsafe names are rejected before filesystem mutation.
-- **Read-only diagnostics** — `catz harness doctor` reports problems without repairing or rewriting files.
+- **Validated manifest data** — harness names and versions reject unsafe/control-character payloads before terminal output or mutation.
+- **Read-only diagnostics** — `catz harness doctor` reports problems without repairing or rewriting files, including redirected/symlinked workspace paths.
 - **Cross-platform verification** — CI runs on Windows and Ubuntu with Node.js 20 and 22.
-- **Release-tested** — the public `0.1.0` package passed the full clean-room `npx` lifecycle before release tagging.
+- **Adversarial filesystem tests** — the `v0.1.1` source target covers symlink/junction escapes and terminal-control manifest payloads.
+- **Release-tested** — the public `0.1.0` package passed the original clean-room `npx` lifecycle; the security patch will receive a new clean-room acceptance run before publication.
 
 ## Roadmap
 
@@ -165,10 +172,11 @@ CATZ v0.1.0 deliberately keeps its behavior small and predictable.
 | `catz harness remove` | ✅ Complete |
 | `catz harness doctor` | ✅ Complete |
 | npm / npx distribution | ✅ Complete |
-| CATZ Harness CLI `v0.1.0` | 🔒 Released |
-| Full PowerPoint Presentation Harness integration | 🚧 Next |
+| CATZ Harness CLI `v0.1.0` | ✅ Released |
+| Security Patch `v0.1.1` — filesystem boundary hardening | 🛡️ In validation |
+| Full PowerPoint Presentation Harness integration | ⏸️ Paused until `v0.1.1` |
 
-The current focus is integrating a real CATZ harness source without expanding the CLI beyond its validated v0.1 contract prematurely.
+The current focus is completing and publishing the `v0.1.1` security patch. Full PowerPoint Presentation Harness integration remains paused until the hardened CLI passes CI, package verification, and a clean-room security acceptance test.
 
 ## Requirements
 
@@ -192,7 +200,7 @@ npm ci
 npm test
 ```
 
-The v0.1.0 release baseline contains **35 passing tests**.
+The `v0.1.1` source target contains **45 passing tests**, including adversarial filesystem and manifest-safety coverage.
 
 ### Link the CLI locally
 
@@ -219,6 +227,12 @@ Current public package:
 
 ```text
 catz-harness@0.1.0
+```
+
+Current source target:
+
+```text
+catz-harness@0.1.1
 ```
 
 Run it directly with:
