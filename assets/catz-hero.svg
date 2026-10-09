@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" width="1200" height="440" role="img" aria-label="CATZ Harness CLI - Build. Install. Manage. Validate."><defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1020"/><stop offset="1" stop-color="#1e1146"/></linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#a78bfa" stroke-opacity="0.08"/></pattern>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e9d5ff"/><stop offset="1" stop-color="#67e8f9"/></linearGradient>
+  </defs>
+  <rect width="1200" height="440" rx="28" fill="url(#bg)"/>
+  <rect width="1200" height="440" rx="28" fill="url(#grid)"/>
+  <rect x="1" y="1" width="1198" height="438" rx="27" fill="none" stroke="#7c3aed" stroke-opacity="0.5" stroke-width="2"/>
+  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,'Liberation Mono',monospace">
+    <text x="80" y="110" font-size="22" fill="#34d399">$ npx catz-harness init</text>
+    <text x="80" y="200" font-size="68" font-weight="800" fill="url(#title)">CATZ HARNESS</text>
+    <text x="80" y="268" font-size="68" font-weight="800" fill="url(#title)">CLI</text>
+    <text x="80" y="326" font-size="28" fill="#c4b5fd">Build. Install. Manage. Validate.</text>
+    <text x="80" y="378" font-size="19" fill="#94a3b8">Turn reusable engineering knowledge into installable project harnesses.</text>
+  </g>
+  <g transform="translate(740 10) scale(1.0)">
+  <g id="catz">
+    <!-- body / shoulders -->
+    <path d="M70 420 C70 350 110 318 200 318 C290 318 330 350 330 420 Z" fill="#4c1d95"/>
+    <!-- harness straps -->
+    <path d="M135 322 L200 392 L265 322 L286 330 L200 420 L114 330 Z" fill="#22d3ee"/>
+    <circle cx="200" cy="396" r="11" fill="none" stroke="#fbbf24" stroke-width="5"/>
+    <!-- ears -->
+    <polygon points="80,160 96,52 190,106" fill="#7c3aed"/>
+    <polygon points="320,160 304,52 210,106" fill="#7c3aed"/>
+    <polygon points="104,132 110,82 158,108" fill="#22d3ee"/>
+    <polygon points="296,132 290,82 242,108" fill="#22d3ee"/>
+    <!-- head = terminal window -->
+    <rect x="64" y="92" width="272" height="206" rx="44" fill="#7c3aed"/>
+    <circle cx="112" cy="116" r="6" fill="#f472b6"/>
+    <circle cx="132" cy="116" r="6" fill="#fbbf24"/>
+    <circle cx="152" cy="116" r="6" fill="#34d399"/>
+    <rect x="88" y="136" width="224" height="136" rx="22" fill="#0f172a"/>
+    <!-- >_ prompt face -->
+    <polyline points="142,172 184,204 142,236" fill="none" stroke="#22d3ee" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="212" y="226" width="58" height="14" rx="7" fill="#34d399">
+      <animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.5;0.5;0.9;1" dur="1.2s" repeatCount="indefinite"/>
+    </rect>
+    <!-- whiskers -->
+    <g stroke="#c4b5fd" stroke-width="5" stroke-linecap="round">
+      <line x1="64" y1="196" x2="22" y2="184"/><line x1="64" y1="214" x2="18" y2="214"/><line x1="64" y1="232" x2="22" y2="244"/>
+      <line x1="336" y1="196" x2="378" y2="184"/><line x1="336" y1="214" x2="382" y2="214"/><line x1="336" y1="232" x2="378" y2="244"/>
+    </g>
+    <!-- collar + tag -->
+    <rect x="118" y="290" width="164" height="26" rx="13" fill="#0e7490"/>
+    <rect x="188" y="292" width="24" height="22" rx="4" fill="#fbbf24"/>
+    <circle cx="238" cy="330" r="13" fill="#fbbf24"/>
+    <text x="238" y="336" font-family="monospace" font-size="16" font-weight="700" text-anchor="middle" fill="#0f172a">Z</text>
+  </g></g>
+</svg>
