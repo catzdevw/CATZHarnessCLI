@@ -5,8 +5,11 @@ import path from "node:path";
 import {
   InvalidWorkspaceManifestError,
   readWorkspaceManifest,
+  SAFE_HARNESS_NAME,
+  SAFE_VERSION,
 } from "./manifest.js";
 import { getCatzPaths } from "./paths.js";
+import { inspectSafeCatzPath } from "./security.js";
 import { pathExists } from "../utils/filesystem.js";
 
 declare const process: {
@@ -14,7 +17,6 @@ declare const process: {
 };
 
 const MINIMUM_NODE_MAJOR = 20;
-const SAFE_HARNESS_NAME = /^[a-z0-9][a-z0-9-]*$/;
 
 export type DoctorCheckStatus = "success" | "problem";
 export type DoctorStage =
@@ -74,6 +76,37 @@ export async function inspectDoctor(
   });
 
   const paths = getCatzPaths(options.projectDir);
+
+  const catzSafety = await inspectSafeCatzPath(
+    paths.projectDir,
+    paths.catzDir,
+    "directory",
+  );
+  if (!catzSafety.safe) {
+    checks.push({
+      status: "problem",
+      code: "workspace_path_unsafe",
+      message: "Unsafe CATZ workspace path detected",
+      details: [`  ${catzSafety.reason ?? "workspace containment could not be proven"}`],
+    });
+    return createReport(checks, 0, "workspace");
+  }
+
+  const manifestSafety = await inspectSafeCatzPath(
+    paths.projectDir,
+    paths.manifestFile,
+    "file",
+  );
+  if (!manifestSafety.safe) {
+    checks.push({
+      status: "problem",
+      code: "workspace_manifest_path_unsafe",
+      message: "Unsafe CATZ workspace manifest path detected",
+      details: [`  ${manifestSafety.reason ?? "manifest containment could not be proven"}`],
+    });
+    return createReport(checks, 0, "workspace");
+  }
+
   const catzDirectoryFound = await isDirectory(paths.catzDir);
   const manifestFound = await pathExists(paths.manifestFile);
 
@@ -116,6 +149,25 @@ export async function inspectDoctor(
     message: "catz.json valid",
   });
 
+  const harnessRootSafety = await inspectSafeCatzPath(
+    paths.projectDir,
+    paths.harnessesDir,
+    "directory",
+  );
+  if (!harnessRootSafety.safe) {
+    checks.push({
+      status: "problem",
+      code: "harness_root_unsafe",
+      message: "Unsafe harness directory detected",
+      details: [`  ${harnessRootSafety.reason ?? "harness containment could not be proven"}`],
+    });
+    return createReport(
+      checks,
+      Object.keys(manifest.harnesses).length,
+      "harness-root",
+    );
+  }
+
   if (!(await isDirectory(paths.harnessesDir))) {
     checks.push({
       status: "problem",
@@ -123,7 +175,11 @@ export async function inspectDoctor(
       message: "Missing harness directory:",
       details: ["  .catz/harnesses/"],
     });
-    return createReport(checks, Object.keys(manifest.harnesses).length, "harness-root");
+    return createReport(
+      checks,
+      Object.keys(manifest.harnesses).length,
+      "harness-root",
+    );
   }
 
   checks.push({
@@ -137,18 +193,24 @@ export async function inspectDoctor(
   );
 
   for (const [name, registration] of harnessEntries) {
-    if (!SAFE_HARNESS_NAME.test(name)) {
+    const harnessDir = path.join(paths.harnessesDir, name);
+    const harnessManifestPath = path.join(harnessDir, "harness.json");
+
+    const harnessDirSafety = await inspectSafeCatzPath(
+      paths.projectDir,
+      harnessDir,
+      "directory",
+    );
+    if (!harnessDirSafety.safe) {
       checks.push({
         status: "problem",
-        code: "registered_harness_name_invalid",
-        message: `${name} has an invalid registered harness name`,
+        code: "harness_directory_unsafe",
+        message: `${name} directory is unsafe`,
+        details: [`  ${harnessDirSafety.reason ?? "containment could not be proven"}`],
         harness: name,
       });
       continue;
     }
-
-    const harnessDir = path.join(paths.harnessesDir, name);
-    const harnessManifestPath = path.join(harnessDir, "harness.json");
 
     if (!(await isDirectory(harnessDir))) {
       checks.push({
@@ -167,6 +229,22 @@ export async function inspectDoctor(
       message: `${name} directory found`,
       harness: name,
     });
+
+    const harnessManifestSafety = await inspectSafeCatzPath(
+      paths.projectDir,
+      harnessManifestPath,
+      "file",
+    );
+    if (!harnessManifestSafety.safe) {
+      checks.push({
+        status: "problem",
+        code: "harness_manifest_path_unsafe",
+        message: `${name} harness.json path is unsafe`,
+        details: [`  ${harnessManifestSafety.reason ?? "containment could not be proven"}`],
+        harness: name,
+      });
+      continue;
+    }
 
     if (!(await pathExists(harnessManifestPath))) {
       checks.push({
@@ -249,7 +327,12 @@ async function readInstalledHarnessManifest(
     return null;
   }
 
-  if (typeof parsed.name !== "string" || typeof parsed.version !== "string") {
+  if (
+    typeof parsed.name !== "string" ||
+    typeof parsed.version !== "string" ||
+    !SAFE_HARNESS_NAME.test(parsed.name) ||
+    !SAFE_VERSION.test(parsed.version)
+  ) {
     return null;
   }
 
