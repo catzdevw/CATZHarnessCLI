@@ -12,6 +12,9 @@ export interface WorkspaceManifest {
   [key: string]: unknown;
 }
 
+export const SAFE_HARNESS_NAME = /^[a-z0-9][a-z0-9-]{0,63}$/;
+export const SAFE_VERSION = /^[0-9A-Za-z][0-9A-Za-z.+-]{0,63}$/;
+
 export class InvalidWorkspaceManifestError extends Error {
   constructor() {
     super("Invalid CATZ workspace manifest");
@@ -41,6 +44,10 @@ export async function writeWorkspaceManifest(
   manifestPath: string,
   manifest: WorkspaceManifest,
 ): Promise<void> {
+  if (!isWorkspaceManifest(manifest)) {
+    throw new InvalidWorkspaceManifestError();
+  }
+
   await writeFile(
     manifestPath,
     `${JSON.stringify(manifest, null, 2)}\n`,
@@ -53,6 +60,10 @@ export function registerHarness(
   name: string,
   version: string,
 ): WorkspaceManifest {
+  if (!SAFE_HARNESS_NAME.test(name) || !SAFE_VERSION.test(version)) {
+    throw new InvalidWorkspaceManifestError();
+  }
+
   return {
     ...manifest,
     harnesses: {
@@ -80,8 +91,12 @@ function isWorkspaceManifest(value: unknown): value is WorkspaceManifest {
     return false;
   }
 
-  return Object.values(value.harnesses).every(
-    (entry) => isRecord(entry) && typeof entry.version === "string",
+  return Object.entries(value.harnesses).every(
+    ([name, entry]) =>
+      SAFE_HARNESS_NAME.test(name) &&
+      isRecord(entry) &&
+      typeof entry.version === "string" &&
+      SAFE_VERSION.test(entry.version),
   );
 }
 
