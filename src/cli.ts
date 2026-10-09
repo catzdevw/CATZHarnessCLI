@@ -3,6 +3,7 @@
 import { addCommand } from "./commands/add.js";
 import { initCommand } from "./commands/init.js";
 import { listCommand } from "./commands/list.js";
+import { doctorCommand } from "./commands/doctor.js";
 import { removeCommand } from "./commands/remove.js";
 
 declare const process: {
@@ -69,7 +70,12 @@ async function main(args: string[]): Promise<void> {
     return;
   }
 
-  console.error(`Unknown or unavailable command in v0.1 Milestone 5: ${command}`);
+  if (command === "harness" && args[1] === "doctor" && args.length === 2) {
+    process.exitCode = await doctorCommand();
+    return;
+  }
+
+  console.error(`Unknown or unavailable command in v0.1 Milestone 6: ${command}`);
   console.error("Run 'catz --help' to see the planned command surface.");
   process.exitCode = 1;
 }
