@@ -1,52 +1,123 @@
 # CATZ Harness CLI
 
-CATZ Harness CLI is the command-line entry point for initializing CATZ workspaces and managing installable CATZ harnesses.
+A lightweight command-line interface for initializing CATZ workspaces and managing CATZ harnesses.
 
-## v0.1 milestone plan
+> **v0.1 note:** the `presentation` harness is currently a built-in installation fixture used to validate the CLI contract. The full CATZ PowerPoint Presentation Harness is not bundled yet. It will replace this fixture in a later repository integration step.
 
-The v0.1 command surface is intentionally small:
+## Requirements
 
-```text
-catz init
-catz harness add <name>
-catz harness list
-catz harness remove <name>
-catz harness doctor
-```
+- Node.js 20 or newer
+- npm / npx
 
-## Milestone 2 — initialize a CATZ workspace
+## Quick Start
 
-Build and link the CLI locally:
+Run CATZ without installing it globally:
 
 ```bash
-npm install
-npm run build
-npm link
+npx catz-harness init
+npx catz-harness harness add presentation
+npx catz-harness harness list
+npx catz-harness harness doctor
 ```
 
-Then initialize the current project:
-
-```bash
-catz init
-```
-
-The command creates:
+A CATZ workspace lives inside the current project:
 
 ```text
 .catz/
-├── harnesses/
-└── catz.json
+├── catz.json
+└── harnesses/
 ```
 
-with:
+## Commands
 
-```json
-{
-  "version": 1,
-  "harnesses": {}
-}
+### Initialize a workspace
+
+```bash
+catz init
 ```
 
-Running `catz init` again is safe and does not overwrite an existing `.catz/catz.json`.
+Creates `.catz/`, `.catz/harnesses/`, and `.catz/catz.json`. Running it again is safe and does not overwrite an existing manifest.
 
-Registry resolution, harness installation, listing, removal, and doctor checks are intentionally deferred to later v0.1 milestones.
+### Add a harness
+
+```bash
+catz harness add <name>
+```
+
+For v0.1, the built-in installable fixture is:
+
+```bash
+catz harness add presentation
+```
+
+The command creates the managed harness directory and registers the harness version in `.catz/catz.json`.
+
+### List installed harnesses
+
+```bash
+catz harness list
+```
+
+Lists harnesses registered in `.catz/catz.json`. The workspace manifest is the source of truth for installed state.
+
+### Remove a harness
+
+```bash
+catz harness remove <name>
+```
+
+Recursively removes the CATZ-managed harness directory and unregisters it from the workspace manifest. Removal is idempotent and validates harness names before touching the filesystem.
+
+### Diagnose a workspace
+
+```bash
+catz harness doctor
+```
+
+Performs read-only health checks for:
+
+- supported Node.js runtime
+- CATZ workspace presence
+- valid `.catz/catz.json`
+- harness root presence
+- each registered harness directory
+- each registered `harness.json`
+- harness name consistency
+- harness version consistency
+
+Doctor does not repair or rewrite workspace state.
+
+## Local Development
+
+```bash
+npm install
+npm test
+npm link
+```
+
+Then the local executable is available as:
+
+```bash
+catz --version
+catz --help
+```
+
+## Package Verification
+
+Before publishing a release:
+
+```bash
+npm test
+npm pack --dry-run
+npm pack
+```
+
+The npm package intentionally ships compiled `dist/` output plus npm's automatically included package metadata, README, and license. Source files and tests are not part of the published package.
+
+## Version
+
+Current release target: `0.1.0`.
+
+## License
+
+MIT

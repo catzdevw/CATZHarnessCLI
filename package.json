@@ -1,7 +1,7 @@
 {
   "name": "catz-harness",
   "version": "0.1.0",
-  "description": "CLI for managing CATZ harnesses.",
+  "description": "A lightweight CLI for initializing CATZ workspaces and managing CATZ harnesses.",
   "type": "module",
   "bin": {
     "catz": "./dist/cli.js"
@@ -13,16 +13,30 @@
     "build": "tsc -p tsconfig.json",
     "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\"",
     "test": "npm run build && node --test tests/*.test.mjs",
-    "prepublishOnly": "npm run clean && npm run build",
+    "prepack": "npm run clean && npm test",
+    "prepublishOnly": "npm test",
     "start": "node dist/cli.js"
   },
   "keywords": [
     "catz",
     "harness",
     "cli",
-    "developer-tools"
+    "developer-tools",
+    "ai-harness",
+    "automation"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyumw3b/CATZ-Harness-CLI.git"
+  },
+  "homepage": "https://github.com/kyumw3b/CATZ-Harness-CLI#readme",
+  "bugs": {
+    "url": "https://github.com/kyumw3b/CATZ-Harness-CLI/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=20"
   },
