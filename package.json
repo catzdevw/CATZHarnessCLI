@@ -1,0 +1,31 @@
+{
+  "name": "catz-harness",
+  "version": "0.1.0",
+  "description": "CLI for managing CATZ harnesses.",
+  "type": "module",
+  "bin": {
+    "catz": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "node -e \"import('node:fs').then(fs => fs.rmSync('dist', { recursive: true, force: true }))\"",
+    "prepublishOnly": "npm run clean && npm run build",
+    "start": "node dist/cli.js"
+  },
+  "keywords": [
+    "catz",
+    "harness",
+    "cli",
+    "developer-tools"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}
