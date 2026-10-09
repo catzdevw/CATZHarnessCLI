@@ -62,6 +62,19 @@ export function registerHarness(
   };
 }
 
+export function unregisterHarness(
+  manifest: WorkspaceManifest,
+  name: string,
+): WorkspaceManifest {
+  const harnesses = { ...manifest.harnesses };
+  delete harnesses[name];
+
+  return {
+    ...manifest,
+    harnesses,
+  };
+}
+
 function isWorkspaceManifest(value: unknown): value is WorkspaceManifest {
   if (!isRecord(value) || value.version !== 1 || !isRecord(value.harnesses)) {
     return false;

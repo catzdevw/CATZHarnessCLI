@@ -1,6 +1,6 @@
 // Node built-in module typings are intentionally not required at runtime.
 // @ts-ignore -- resolved by Node.js when the compiled CLI runs.
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, rm, writeFile } from "node:fs/promises";
 
 interface ErrorWithCode extends Error {
   code?: string;
@@ -22,6 +22,19 @@ export async function ensureDirectory(directoryPath: string): Promise<boolean> {
 
   await mkdir(directoryPath, { recursive: true });
   return true;
+}
+
+export async function removeDirectory(directoryPath: string): Promise<boolean> {
+  try {
+    await rm(directoryPath, { recursive: true, force: false });
+    return true;
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      return false;
+    }
+
+    throw error;
+  }
 }
 
 export async function writeJsonFileIfMissing(
@@ -47,5 +60,13 @@ function isAlreadyExistsError(error: unknown): error is ErrorWithCode {
     error instanceof Error &&
     "code" in error &&
     (error as ErrorWithCode).code === "EEXIST"
+  );
+}
+
+function isNotFoundError(error: unknown): error is ErrorWithCode {
+  return (
+    error instanceof Error &&
+    "code" in error &&
+    (error as ErrorWithCode).code === "ENOENT"
   );
 }
