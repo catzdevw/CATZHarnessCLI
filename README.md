@@ -161,22 +161,6 @@ CATZ keeps its behavior small and predictable. The `v0.1.1` source target adds e
 - **Adversarial filesystem tests** — the `v0.1.1` source target covers symlink/junction escapes and terminal-control manifest payloads.
 - **Release-tested** — the public `0.1.0` package passed the original clean-room `npx` lifecycle; the security patch will receive a new clean-room acceptance run before publication.
 
-## Roadmap
-
-| Stage | Status |
-| --- | --- |
-| CLI executable and command routing | ✅ Complete |
-| `catz init` | ✅ Complete |
-| `catz harness add` | ✅ Complete |
-| `catz harness list` | ✅ Complete |
-| `catz harness remove` | ✅ Complete |
-| `catz harness doctor` | ✅ Complete |
-| npm / npx distribution | ✅ Complete |
-| CATZ Harness CLI `v0.1.0` | ✅ Released |
-| Security Patch `v0.1.1` — filesystem boundary hardening | 🛡️ In validation |
-| Full PowerPoint Presentation Harness integration | ⏸️ Paused until `v0.1.1` |
-
-The current focus is completing and publishing the `v0.1.1` security patch. Full PowerPoint Presentation Harness integration remains paused until the hardened CLI passes CI, package verification, and a clean-room security acceptance test.
 
 ## Requirements
 
